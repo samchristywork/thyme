@@ -10,6 +10,16 @@ chrono::high_resolution_clock::time_point start;
 const char *stdoutFilename = "stdout.txt";
 const char *stderrFilename = "stderr.txt";
 
+void makeCursorInvisible() {
+  cout << "\033[?25l";
+  cout.flush();
+}
+
+void makeCursorVisible() {
+  cout << "\033[?25h";
+  cout.flush();
+}
+
 void signalHandler(int signum) {
   cout << endl;
   cout << "Interrupt signal (" << signum << ") received.\n";
