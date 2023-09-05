@@ -38,7 +38,10 @@ void printTimeUsage() {
   auto duration = duration_cast<microseconds>(stop - start);
 
   struct rusage usage;
-  getrusage(RUSAGE_CHILDREN, &usage);
+  if (getrusage(RUSAGE_CHILDREN, &usage) == -1) {
+    perror("getrusage failed");
+    exit(EXIT_FAILURE);
+  }
 
   auto real = duration.count() / 1e6;
   auto userCPU = usage.ru_utime.tv_sec + usage.ru_utime.tv_usec / 1e6;
