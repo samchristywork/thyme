@@ -72,6 +72,17 @@ void signalHandler(int signum) {
   exit(signum);
 }
 
+void printStats(const char *stdoutFilename) {
+  auto currentTime = high_resolution_clock::now();
+  auto duration = duration_cast<milliseconds>(currentTime - start);
+
+  auto seconds = duration.count() / 1000;
+  auto millis = duration.count() % 1000;
+  auto lines = countLines(stdoutFilename);
+
+  printf("%ld.%03ld seconds: %d lines of output\r", seconds, millis, lines);
+}
+
 void handleChild(const char *stdoutFilename, const char *stderrFilename,
                  char *command, vector<char *> args) {
   exit(EXIT_FAILURE);
