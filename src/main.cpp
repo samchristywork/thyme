@@ -33,6 +33,24 @@ void makeCursorVisible() {
   cout.flush();
 }
 
+void printTimeUsage() {
+  auto stop = high_resolution_clock::now();
+  auto duration = duration_cast<microseconds>(stop - start);
+
+  struct rusage usage;
+  getrusage(RUSAGE_CHILDREN, &usage);
+
+  auto real = duration.count() / 1e6;
+  auto userCPU = usage.ru_utime.tv_sec + usage.ru_utime.tv_usec / 1e6;
+  auto systemCPU = usage.ru_stime.tv_sec + usage.ru_stime.tv_usec / 1e6;
+
+  cout << endl;
+  cout << "Time usage:" << endl;
+  cout << "\tReal: " << real << " seconds" << endl;
+  cout << "\tUser CPU: " << userCPU << " seconds" << endl;
+  cout << "\tSystem CPU: " << systemCPU << " seconds" << endl;
+}
+
 void signalHandler(int signum) {
   cout << endl;
   cout << "Interrupt signal (" << signum << ") received.\n";
