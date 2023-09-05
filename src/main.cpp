@@ -40,6 +40,8 @@ void printTimeUsage() {
   struct rusage usage;
   if (getrusage(RUSAGE_CHILDREN, &usage) == -1) {
     perror("getrusage failed");
+
+    makeCursorVisible();
     exit(EXIT_FAILURE);
   }
 
