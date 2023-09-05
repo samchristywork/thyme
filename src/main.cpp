@@ -10,6 +10,19 @@ chrono::high_resolution_clock::time_point start;
 const char *stdoutFilename = "stdout.txt";
 const char *stderrFilename = "stderr.txt";
 
+// TODO: Inefficient
+int countLines(const char *filename) {
+  std::ifstream infile(filename);
+  std::string line;
+  int count = 0;
+
+  while (std::getline(infile, line)) {
+    ++count;
+  }
+
+  return count;
+}
+
 void makeCursorInvisible() {
   cout << "\033[?25l";
   cout.flush();
