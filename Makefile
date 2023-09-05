@@ -12,6 +12,10 @@ build/%.o: src/%.cpp
 build/main: build/main.o
 	${CC} build/*.o ${LIBS} -o $@
 
+.PHONY: run
+run: build/main
+	./build/main ls
+
 .PHONY: clean
 clean:
 	rm -rf build
