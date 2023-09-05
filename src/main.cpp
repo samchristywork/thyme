@@ -51,6 +51,20 @@ void printTimeUsage() {
   cout << "\tSystem CPU: " << systemCPU << " seconds" << endl;
 }
 
+void cleanup() {
+  printTimeUsage();
+
+  auto stdoutLines = countLines(stdoutFilename);
+  auto stderrLines = countLines(stderrFilename);
+
+  cout << endl;
+  cout << "Output saved to:" << endl;
+  cout << "\t" << stdoutFilename << ": (" << stdoutLines << " lines)" << endl;
+  cout << "\t" << stderrFilename << ": (" << stderrLines << " lines)" << endl;
+
+  makeCursorVisible();
+}
+
 void signalHandler(int signum) {
   cout << endl;
   cout << "Interrupt signal (" << signum << ") received.\n";
