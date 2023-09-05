@@ -1,5 +1,13 @@
+CC=gcc
+
 all: build/main
 
-build/main: src/main.cpp
+.PHONY: objects
+objects: $(patsubst src/%.c, build/%.o, $(wildcard src/*.c))
+
+build/%.o: src/%.c
 	mkdir -p build
-	g++ -o build/main src/main.cpp
+	$(CC) -c $(CFLAGS) $< -o $@
+
+build/main: build/main.o
+	${CC} build/*.o ${LIBS} -o $@
