@@ -1,11 +1,15 @@
 #include <chrono>
+#include <fcntl.h>
+#include <fstream>
 #include <iostream>
-#include <signal.h>
+#include <sys/resource.h>
+#include <sys/wait.h>
 #include <vector>
 
 using namespace std;
+using namespace std::chrono;
 
-chrono::high_resolution_clock::time_point start;
+high_resolution_clock::time_point start;
 
 const char *stdoutFilename = "stdout.txt";
 const char *stderrFilename = "stderr.txt";
@@ -117,6 +121,10 @@ void redirectOutput(const char *stdoutFilename, const char *stderrFilename) {
 
 void handleChild(const char *stdoutFilename, const char *stderrFilename,
                  char *command, vector<char *> args) {
+  redirectOutput(stdoutFilename, stderrFilename);
+
+  execvp(command, &args[0]);
+  perror("Exec failed");
   exit(EXIT_FAILURE);
 }
 
