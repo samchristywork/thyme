@@ -131,6 +131,20 @@ void handleChild(const char *stdoutFilename, const char *stderrFilename,
 }
 
 void handleParent(const char *stdoutFilename, pid_t pid) {
+  makeCursorInvisible();
+  int status;
+  while (true) {
+    if (waitpid(pid, &status, WNOHANG) == pid) {
+      break;
+    } else {
+      printStats(stdoutFilename);
+      usleep(1000);
+    }
+  }
+  printStats(stdoutFilename);
+  cout << endl;
+
+  cleanup();
 }
 
 int main(int argc, char *argv[]) {
@@ -150,7 +164,7 @@ int main(int argc, char *argv[]) {
   signal(SIGINT, signalHandler);
 
   // Record start time
-  start = chrono::high_resolution_clock::now();
+  start = high_resolution_clock::now();
 
   // Fork
   pid_t pid = fork();
