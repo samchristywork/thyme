@@ -78,6 +78,8 @@ void signalHandler(int signum) {
   cout << endl;
   cout << "Interrupt signal (" << signum << ") received.\n";
 
+  cleanup();
+
   exit(signum);
 }
 
