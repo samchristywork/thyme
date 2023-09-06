@@ -88,6 +88,33 @@ void printStats(const char *stdoutFilename) {
   printf("%ld.%03ld seconds: %d lines of output\r", seconds, millis, lines);
 }
 
+void redirectOutput(const char *stdoutFilename, const char *stderrFilename) {
+  int stdoutFd = open(stdoutFilename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  if (stdoutFd == -1) {
+    perror("Open stdout failed");
+    exit(EXIT_FAILURE);
+  }
+
+  int stderrFd = open(stderrFilename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  if (stderrFd == -1) {
+    perror("Open stderr failed");
+    exit(EXIT_FAILURE);
+  }
+
+  if (dup2(stdoutFd, STDOUT_FILENO) == -1) {
+    perror("Redirect stdout failed");
+    exit(EXIT_FAILURE);
+  }
+
+  if (dup2(stderrFd, STDERR_FILENO) == -1) {
+    perror("Redirect stderr failed");
+    exit(EXIT_FAILURE);
+  }
+
+  close(stdoutFd);
+  close(stderrFd);
+}
+
 void handleChild(const char *stdoutFilename, const char *stderrFilename,
                  char *command, vector<char *> args) {
   exit(EXIT_FAILURE);
