@@ -34,6 +34,8 @@ public:
         } else {
           options[shortOpt] = "";
         }
+      } else {
+        positionalArgs.push_back(arg);
       }
     }
   }

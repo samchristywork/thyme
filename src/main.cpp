@@ -160,6 +160,11 @@ int main(int argc, char *argv[]) {
   // Record start time
   start = high_resolution_clock::now();
 
+  if (args.positionalArgs.size() == 0) {
+    cout << "Usage: " << argv[0] << " <command> [args...]" << endl;
+    return 1;
+  }
+
   // Fork
   pid_t pid = fork();
   if (pid < 0) {
