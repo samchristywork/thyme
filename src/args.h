@@ -41,11 +41,20 @@ public:
   bool isSet(const string &option) const {
   }
 
-  string get(const string &option, const string &defaultValue = "") const {
+  string get(string shortOption, string longOption, string defaultValue = "") {
+    if (isSet(longOption)) {
+      return options.at(longOption);
+    }
+
+    if (isSet(shortOption)) {
+      return options.at(shortOption);
+    }
+
+    return defaultValue;
   }
 
 private:
   map<string, string> options;
 };
 
-#endif // ARG_PARSER_H
+#endif
