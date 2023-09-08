@@ -27,6 +27,13 @@ public:
         } else {
           options[longOpt] = "";
         }
+      } else if (arg[0] == '-') {
+        string shortOpt = arg.substr(1);
+        if (shortOpt.length() == 1 && i + 1 < argc && argv[i + 1][0] != '-') {
+          options[shortOpt] = argv[++i];
+        } else {
+          options[shortOpt] = "";
+        }
       }
     }
   }
