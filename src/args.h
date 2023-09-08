@@ -13,6 +13,22 @@ public:
   vector<string> positionalArgs;
 
   ArgParser(int argc, char **argv) {
+    for (int i = 1; i < argc; ++i) {
+      string arg = argv[i];
+
+      if (arg.substr(0, 2) == "--") {
+        string longOpt = arg.substr(2);
+        string::size_type pos = longOpt.find('=');
+
+        if (pos != string::npos) {
+          string key = longOpt.substr(0, pos);
+          string value = longOpt.substr(pos + 1);
+          options[key] = value;
+        } else {
+          options[longOpt] = "";
+        }
+      }
+    }
   }
 
   bool isSet(const string &option) const {
