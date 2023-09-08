@@ -6,6 +6,7 @@ int main() {
   for (int i = 0; i < 1000000000; i++) {
     if (i % 10000000 == 0) {
       printf("i = %d\n", i);
+      fflush(stdout);
     }
 
     acc += i;
