@@ -1,4 +1,5 @@
 CC=g++
+CFLAGS=-Isrc/
 
 all: build/main
 

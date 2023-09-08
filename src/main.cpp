@@ -1,3 +1,4 @@
+#include <args.h>
 #include <chrono>
 #include <fcntl.h>
 #include <fstream>
@@ -148,17 +149,10 @@ void handleParent(const char *stdoutFilename, pid_t pid) {
 }
 
 int main(int argc, char *argv[]) {
-  if (argc < 2) {
-    cerr << "Usage: " << argv[0] << " command [args...]" << endl;
-    return EXIT_FAILURE;
-  }
+  ArgParser args(argc, argv);
 
-  // Collect arguments to be passed to child
-  vector<char *> childArgs;
-  for (int i = 1; i < argc; ++i) {
-    childArgs.push_back(argv[i]);
-  }
-  childArgs.push_back(NULL);
+  stdoutFilename = args.get("stdout", "stdout.txt");
+  stderrFilename = args.get("stderr", "stderr.txt");
 
   // Register signal handler
   signal(SIGINT, signalHandler);
@@ -174,7 +168,11 @@ int main(int argc, char *argv[]) {
   }
 
   if (pid == 0) {
-    handleChild(stdoutFilename, stderrFilename, argv[1], childArgs);
+    // Null-terminate args
+    args.positionalArgs.push_back(NULL);
+
+    handleChild(stdoutFilename, stderrFilename, args.positionalArgs[0].c_str(),
+                args.positionalArgs);
   } else {
     handleParent(stdoutFilename, pid);
   }
