@@ -12,11 +12,11 @@ using namespace std::chrono;
 
 high_resolution_clock::time_point start;
 
-const char *stdoutFilename = "stdout.txt";
-const char *stderrFilename = "stderr.txt";
+string stdoutFilename;
+string stderrFilename;
 
 // TODO: Inefficient
-int countLines(const char *filename) {
+int countLines(string filename) {
   std::ifstream infile(filename);
   std::string line;
   int count = 0;
@@ -84,7 +84,7 @@ void signalHandler(int signum) {
   exit(signum);
 }
 
-void printStats(const char *stdoutFilename) {
+void printStats(string stdoutFilename) {
   auto currentTime = high_resolution_clock::now();
   auto duration = duration_cast<milliseconds>(currentTime - start);
 
@@ -95,14 +95,16 @@ void printStats(const char *stdoutFilename) {
   printf("%ld.%03ld seconds: %d lines of output\r", seconds, millis, lines);
 }
 
-void redirectOutput(const char *stdoutFilename, const char *stderrFilename) {
-  int stdoutFd = open(stdoutFilename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+void redirectOutput(string stdoutFilename, string stderrFilename) {
+  int stdoutFd =
+      open(stdoutFilename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
   if (stdoutFd == -1) {
     perror("Open stdout failed");
     exit(EXIT_FAILURE);
   }
 
-  int stderrFd = open(stderrFilename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  int stderrFd =
+      open(stderrFilename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
   if (stderrFd == -1) {
     perror("Open stderr failed");
     exit(EXIT_FAILURE);
@@ -122,8 +124,8 @@ void redirectOutput(const char *stdoutFilename, const char *stderrFilename) {
   close(stderrFd);
 }
 
-void handleChild(const char *stdoutFilename, const char *stderrFilename,
-                 char *command, vector<char *> args) {
+void handleChild(string stdoutFilename, string stderrFilename,
+                 const char *command, vector<char *> args) {
   redirectOutput(stdoutFilename, stderrFilename);
 
   execvp(command, &args[0]);
@@ -131,7 +133,7 @@ void handleChild(const char *stdoutFilename, const char *stderrFilename,
   exit(EXIT_FAILURE);
 }
 
-void handleParent(const char *stdoutFilename, pid_t pid) {
+void handleParent(string stdoutFilename, pid_t pid) {
   makeCursorInvisible();
   int status;
   while (true) {
