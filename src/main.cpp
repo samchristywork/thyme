@@ -92,7 +92,8 @@ void printStats(string stdoutFilename) {
   auto millis = duration.count() % 1000;
   auto lines = countLines(stdoutFilename);
 
-  printf("%ld.%03ld seconds: %d lines of output\r", seconds, millis, lines);
+  // The spaces before the \r are necessary in case the line length changes.
+  printf("%ld.%03ld seconds: %d lines of output   \r", seconds, millis, lines);
 }
 
 void redirectOutput(string stdoutFilename, string stderrFilename) {
