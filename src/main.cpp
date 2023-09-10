@@ -177,10 +177,14 @@ int main(int argc, char *argv[]) {
 
   if (pid == 0) {
     // Null-terminate args
-    args.positionalArgs.push_back(NULL);
+    auto c_args = vector<char *>(args.positionalArgs.size());
+    for (size_t i = 0; i < args.positionalArgs.size(); ++i) {
+      c_args[i] = const_cast<char *>(args.positionalArgs[i].c_str());
+    }
+    c_args.push_back(nullptr);
 
     handleChild(stdoutFilename, stderrFilename, args.positionalArgs[0].c_str(),
-                args.positionalArgs);
+                c_args);
   } else {
     handleParent(stdoutFilename, pid);
   }
