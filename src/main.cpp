@@ -154,8 +154,8 @@ void handleParent(string stdoutFilename, pid_t pid) {
 int main(int argc, char *argv[]) {
   ArgParser args(argc, argv);
 
-  stdoutFilename = args.get("stdout", "stdout.txt");
-  stderrFilename = args.get("stderr", "stderr.txt");
+  stdoutFilename = args.get("o", "stdout", "stdout.txt");
+  stderrFilename = args.get("e", "stderr", "stderr.txt");
 
   // Register signal handler
   signal(SIGINT, signalHandler);
