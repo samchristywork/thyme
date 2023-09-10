@@ -13,8 +13,15 @@ public:
   vector<string> positionalArgs;
 
   ArgParser(int argc, char **argv) {
+    bool positionalArgReached = false;
+
     for (int i = 1; i < argc; ++i) {
       string arg = argv[i];
+
+      if (positionalArgReached) {
+        positionalArgs.push_back(arg);
+        continue;
+      }
 
       if (arg.substr(0, 2) == "--") {
         string longOpt = arg.substr(2);
@@ -35,7 +42,8 @@ public:
           options[shortOpt] = "";
         }
       } else {
-        positionalArgs.push_back(arg);
+        positionalArgReached = true;
+        i--;
       }
     }
   }
