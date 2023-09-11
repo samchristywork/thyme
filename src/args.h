@@ -11,14 +11,26 @@
 
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <string>
+#include <tuple>
 #include <vector>
 
 using namespace std;
 
+struct option {
+  string shortName;
+  string longName;
+  string units;
+  string description;
+  string defaultValue;
+  bool hasValue;
+};
+
 class ArgParser {
 public:
   vector<string> positionalArgs;
+  vector<option> registeredOptions;
 
   ArgParser(int argc, char **argv) {
     bool positionalArgReached = false;
