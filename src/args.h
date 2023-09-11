@@ -35,12 +35,16 @@ public:
   string programName;
   string version;
   string description;
+  bool calledProcess = false;
 
   ArgParser(string programName, string version, string description) {
     this->programName = programName;
     this->version = version;
     this->description = description;
   }
+
+  void process(int argc, char **argv) {
+    this->calledProcess = true;
 
     bool positionalArgReached = false;
 
@@ -52,23 +56,28 @@ public:
         continue;
       }
 
-      if (arg.substr(0, 2) == "--") {
-        string longOpt = arg.substr(2);
-        string::size_type pos = longOpt.find('=');
+      if (arg.substr(0, 2) == "--" || arg.substr(0, 1) == "-") {
+        string option = arg.substr(arg.substr(0, 2) == "--" ? 2 : 1);
 
-        if (pos != string::npos) {
-          string key = longOpt.substr(0, pos);
-          string value = longOpt.substr(pos + 1);
-          options[key] = value;
-        } else {
-          options[longOpt] = "";
+        if (option == "") {
+          positionalArgReached = true;
+          continue;
         }
-      } else if (arg[0] == '-') {
-        string shortOpt = arg.substr(1);
-        if (shortOpt.length() == 1 && i + 1 < argc && argv[i + 1][0] != '-') {
-          options[shortOpt] = argv[++i];
-        } else {
-          options[shortOpt] = "";
+
+        bool found = false;
+        for (auto &registeredOption : registeredOptions) {
+          if (registeredOption.shortName == option ||
+              registeredOption.longName == option) {
+            found = true;
+            if (registeredOption.hasValue) {
+              if (i + 1 < argc) {
+                options[registeredOption.shortName] = argv[i + 1];
+                options[registeredOption.longName] = argv[i + 1];
+                i++;
+              }
+            }
+            break;
+          }
         }
       } else {
         positionalArgReached = true;
