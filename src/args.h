@@ -144,6 +144,43 @@ public:
     exit(1);
   }
 
+  void usage() {
+    cout << "Usage: " << this->programName << " [options] command [args...]";
+    cout << endl << endl;
+
+    cout << "Options:" << endl;
+
+    vector<tuple<string, string>> lines;
+
+    int maxWidth = 0;
+    for (auto &option : registeredOptions) {
+      stringstream buffer;
+
+      if (option.hasValue) {
+        buffer << "  -" << option.shortName << ", --" << option.longName << " <"
+               << option.units << ">  ";
+      } else {
+        buffer << "  -" << option.shortName << ", --" << option.longName
+               << "  ";
+      }
+
+      lines.push_back(make_tuple(buffer.str(), option.description));
+
+      maxWidth = max(maxWidth, (int)buffer.str().size());
+    }
+
+    for (auto line : lines) {
+      cout << std::get<0>(line);
+
+      for (int i = 0; i < maxWidth - std::get<0>(line).size(); ++i) {
+        cout << " ";
+      }
+
+      cout << std::get<1>(line);
+      cout << endl;
+    }
+  }
+
 private:
   map<string, string> options;
 };
