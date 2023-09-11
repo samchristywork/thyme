@@ -29,10 +29,19 @@ struct option {
 
 class ArgParser {
 public:
+  map<string, string> options;
   vector<string> positionalArgs;
   vector<option> registeredOptions;
+  string programName;
+  string version;
+  string description;
 
-  ArgParser(int argc, char **argv) {
+  ArgParser(string programName, string version, string description) {
+    this->programName = programName;
+    this->version = version;
+    this->description = description;
+  }
+
     bool positionalArgReached = false;
 
     for (int i = 1; i < argc; ++i) {
