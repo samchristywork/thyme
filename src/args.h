@@ -41,6 +41,10 @@ public:
     this->programName = programName;
     this->version = version;
     this->description = description;
+
+    this->registerOption("h", "help", "", "", false, "Show this help message");
+    this->registerOption("v", "version", "", "", false,
+                         "Show version and license information");
   }
 
   void process(int argc, char **argv) {
@@ -86,10 +90,11 @@ public:
     }
   }
 
-  bool isSet(string option) { return options.find(option) != options.end(); }
+  void registerOption(string shortOption, string longOption, string units,
+                      string defaultValue, bool hasValue, string description) {
 
-  bool isSet(string shortOption, string longOption) {
-    return isSet(shortOption) || isSet(longOption);
+    registeredOptions.push_back(
+        {shortOption, longOption, units, description, defaultValue, hasValue});
   }
 
   string get(string shortOption, string longOption, string defaultValue = "") {
