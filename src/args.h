@@ -1,6 +1,14 @@
 #ifndef ARG_PARSER_H
 #define ARG_PARSER_H
 
+#define LICENSE_STRING                                                         \
+  "Copyright (C) 2023+ Sam Christy.\n"                                         \
+  "License GPLv3+: GNU GPL version 3 or later "                                \
+  "<http://gnu.org/licenses/gpl.html>\n"                                       \
+  "\n"                                                                         \
+  "This is free software; you are free to change and redistribute it.\n"       \
+  "There is NO WARRANTY, to the extent permitted by law."
+
 #include <iostream>
 #include <map>
 #include <string>
