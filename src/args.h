@@ -115,9 +115,10 @@ public:
         {shortOption, longOption, units, description, defaultValue, hasValue});
   }
 
-  string get(string shortOption, string longOption, string defaultValue = "") {
-    if (isSet(longOption)) {
-      return options.at(longOption);
+  string get(string shortOption, string longOption) {
+    if (this->calledProcess == false) {
+      cout << "You must call process() before calling get()" << endl;
+      exit(1);
     }
 
     if (isSet(shortOption)) {
