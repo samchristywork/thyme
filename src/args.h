@@ -94,6 +94,18 @@ public:
         i--;
       }
     }
+
+    if (isSet("h", "help")) {
+      usage();
+      exit(0);
+    }
+
+    if (isSet("v", "version")) {
+      cout << this->programName << " version " << this->version << endl;
+      cout << endl;
+      cout << LICENSE_STRING << endl;
+      exit(0);
+    }
   }
 
   void registerOption(string shortOption, string longOption, string units,
