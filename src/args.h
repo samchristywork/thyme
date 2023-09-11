@@ -78,7 +78,13 @@ public:
                 options[registeredOption.shortName] = argv[i + 1];
                 options[registeredOption.longName] = argv[i + 1];
                 i++;
+              } else {
+                cout << "Missing value for option " << option << endl;
+                exit(1);
               }
+            } else {
+              options[registeredOption.shortName] = "true";
+              options[registeredOption.longName] = "true";
             }
             break;
           }
