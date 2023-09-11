@@ -125,7 +125,23 @@ public:
       return options.at(shortOption);
     }
 
-    return defaultValue;
+    if (isSet(longOption)) {
+      return options.at(longOption);
+    }
+
+    return defaultValue(shortOption, longOption);
+  }
+
+  string defaultValue(string shortOption, string longOption) {
+    for (auto &option : registeredOptions) {
+      if (option.shortName == shortOption || option.longName == longOption) {
+        return option.defaultValue;
+      }
+    }
+
+    cout << "Option " << shortOption << " or " << longOption
+         << " not registered" << endl;
+    exit(1);
   }
 
 private:
