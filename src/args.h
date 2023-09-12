@@ -191,6 +191,8 @@ public:
     }
   }
 
+  void registerExample(string example) { examples.push_back(example); }
+
   bool isSet(string option) { return options.find(option) != options.end(); }
 
   bool isSet(string shortOption, string longOption) {
