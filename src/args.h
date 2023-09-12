@@ -35,6 +35,7 @@ public:
   string programName;
   string version;
   string description;
+  vector<string> examples;
   bool calledProcess = false;
 
   ArgParser(string programName, string version, string description) {
@@ -148,6 +149,9 @@ public:
     cout << "Usage: " << this->programName << " [options] command [args...]";
     cout << endl << endl;
 
+    cout << this->description << endl;
+    cout << endl;
+
     cout << "Options:" << endl;
 
     vector<tuple<string, string>> lines;
@@ -178,6 +182,12 @@ public:
 
       cout << std::get<1>(line);
       cout << endl;
+    }
+
+    cout << endl;
+    cout << "Examples:" << endl;
+    for (auto example : examples) {
+      cout << "  " << example << endl;
     }
   }
 
