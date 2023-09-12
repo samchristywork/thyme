@@ -191,8 +191,13 @@ public:
     }
   }
 
+  bool isSet(string option) { return options.find(option) != options.end(); }
+
+  bool isSet(string shortOption, string longOption) {
+    return isSet(shortOption) || isSet(longOption);
+  }
+
 private:
-  map<string, string> options;
 };
 
 #endif
