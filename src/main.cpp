@@ -14,6 +14,7 @@ high_resolution_clock::time_point start;
 
 string stdoutFilename;
 string stderrFilename;
+float timeout;
 
 // TODO: Inefficient
 int countLines(string filename) {
@@ -136,13 +137,25 @@ void handleChild(string stdoutFilename, string stderrFilename,
 
 void handleParent(string stdoutFilename, pid_t pid) {
   makeCursorInvisible();
+
   int status;
+  float timeTaken = 0;
   while (true) {
     if (waitpid(pid, &status, WNOHANG) == pid) {
       break;
     } else {
       printStats(stdoutFilename);
       usleep(1000);
+    }
+
+    auto currentTime = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(currentTime - start);
+    timeTaken = duration.count() / 1000.0;
+    if (timeout > 0 && timeTaken > timeout) {
+      cout << endl;
+      cout << "Timeout (" << timeout << " seconds) reached." << endl;
+      kill(pid, SIGKILL);
+      break;
     }
   }
   printStats(stdoutFilename);
@@ -164,7 +177,7 @@ int main(int argc, char *argv[]) {
   start = high_resolution_clock::now();
 
   if (args.positionalArgs.size() == 0) {
-    cout << "Usage: " << argv[0] << " <command> [args...]" << endl;
+    args.usage();
     return 1;
   }
 
