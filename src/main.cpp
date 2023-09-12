@@ -165,10 +165,24 @@ void handleParent(string stdoutFilename, pid_t pid) {
 }
 
 int main(int argc, char *argv[]) {
-  ArgParser args(argc, argv);
+  ArgParser args =
+      ArgParser("thyme", "1.0.0", "Run a command and record its output");
 
-  stdoutFilename = args.get("o", "stdout", "stdout.txt");
-  stderrFilename = args.get("e", "stderr", "stderr.txt");
+  args.registerOption("o", "stdout", "file", "stdout.txt", true,
+                      "The file to write stdout to");
+  args.registerOption("e", "stderr", "file", "stderr.txt", true,
+                      "The file to write stderr to");
+  args.registerOption("t", "timeout", "seconds", "0", true,
+                      "The maximum time to run the command for");
+
+  args.registerExample("thyme -o stdout.txt -e stderr.txt -t 10 sleep 5");
+  args.registerExample("thyme bash -c \"ls\"");
+
+  args.process(argc, argv);
+
+  stdoutFilename = args.get("o", "stdout");
+  stderrFilename = args.get("e", "stderr");
+  timeout = stof(args.get("t", "timeout"));
 
   // Register signal handler
   signal(SIGINT, signalHandler);
