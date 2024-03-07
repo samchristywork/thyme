@@ -10,20 +10,18 @@
 using namespace std;
 using namespace std::chrono;
 
-high_resolution_clock::time_point start;
-
-string stdoutFilename;
-string stderrFilename;
 float timeout;
+high_resolution_clock::time_point start;
+string stderrFilename;
+string stdoutFilename;
 
-// TODO: Inefficient
 int countLines(string filename) {
-  std::ifstream infile(filename);
-  std::string line;
-  int count = 0;
+  ifstream infile(filename);
+  string line;
 
-  while (std::getline(infile, line)) {
-    ++count;
+  int count = 0;
+  while (getline(infile, line)) {
+    count++;
   }
 
   return count;
@@ -65,8 +63,8 @@ void printTimeUsage() {
 void cleanup() {
   printTimeUsage();
 
-  auto stdoutLines = countLines(stdoutFilename);
-  auto stderrLines = countLines(stderrFilename);
+  int stdoutLines = countLines(stdoutFilename);
+  int stderrLines = countLines(stderrFilename);
 
   cout << endl;
   cout << "Output saved to:" << endl;
@@ -89,24 +87,24 @@ void printStats(string stdoutFilename) {
   auto currentTime = high_resolution_clock::now();
   auto duration = duration_cast<milliseconds>(currentTime - start);
 
-  auto seconds = duration.count() / 1000;
-  auto millis = duration.count() % 1000;
-  auto lines = countLines(stdoutFilename);
+  long seconds = duration.count() / 1000;
+  long millis = duration.count() % 1000;
+  int lines = countLines(stdoutFilename);
 
   // The spaces before the \r are necessary in case the line length changes.
   printf("%ld.%03ld seconds: %d lines of output   \r", seconds, millis, lines);
 }
 
 void redirectOutput(string stdoutFilename, string stderrFilename) {
-  int stdoutFd =
-      open(stdoutFilename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  const char *out = stdoutFilename.c_str();
+  int stdoutFd = open(out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
   if (stdoutFd == -1) {
     perror("Open stdout failed");
     exit(EXIT_FAILURE);
   }
 
-  int stderrFd =
-      open(stderrFilename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  const char *err = stderrFilename.c_str();
+  int stderrFd = open(err, O_WRONLY | O_CREAT | O_TRUNC, 0644);
   if (stderrFd == -1) {
     perror("Open stderr failed");
     exit(EXIT_FAILURE);
@@ -131,6 +129,8 @@ void handleChild(string stdoutFilename, string stderrFilename,
   redirectOutput(stdoutFilename, stderrFilename);
 
   execvp(command, &args[0]);
+
+  // Unreachable unless exec fails
   perror("Exec failed");
   exit(EXIT_FAILURE);
 }
@@ -141,6 +141,7 @@ void handleParent(string stdoutFilename, pid_t pid) {
   int status;
   float timeTaken = 0;
   while (true) {
+    // Check if child has exited
     if (waitpid(pid, &status, WNOHANG) == pid) {
       break;
     } else {
@@ -192,14 +193,14 @@ int main(int argc, char *argv[]) {
 
   if (args.positionalArgs.size() == 0) {
     args.usage();
-    return 1;
+    exit(EXIT_FAILURE);
   }
 
   // Fork
   pid_t pid = fork();
   if (pid < 0) {
     perror("Fork failed");
-    return 1;
+    exit(EXIT_FAILURE);
   }
 
   if (pid == 0) {
