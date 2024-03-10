@@ -1,0 +1,14 @@
+strict digraph {
+  node [shape=box];
+
+  "Handle command line arguments" -> "Fork";
+  "Fork" -> "Child process";
+  "Fork" -> "Parent process";
+  "Child process" -> "Redirect output";
+  "Redirect output" -> "Execute command";
+  "Parent process" -> "Print progress";
+  "Print progress" -> "Check if child finished\nor timeout reached";
+  "Check if child finished\nor timeout reached" -> "Print progress";
+  "Check if child finished\nor timeout reached" -> "Print resource usage";
+  "Print resource usage" -> "Exit";
+}
