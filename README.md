@@ -1,10 +1,13 @@
-![Banner](https://s-christy.com/sbs/status-banner.svg?icon=places/grass&hue=120&title=Thyme&description=A%20terminal%20based%20tool%20for%20monitoring%20long%20running%20commands)
+![Banner](https://s-christy.com/sbs/status-banner.svg?icon=places/grass&hue=120&title=Thyme&description=Print%20a%20progess%20indicator%20for%20long%20running%20commands)
 
 ## Overview
 
 <p align="center">
   <img src="./assets/screenshot.png" width=500 />
 </p>
+
+Note: The line that says "bytes of output" should update continuously at 60fps
+while the command is running.
 
 `thyme` is a CLI program written in C++ for timing long-running commands and
 monitoring their progress. Although there is no generalized way to determine how
@@ -16,7 +19,40 @@ to save these streams, and monitor them while the command is running with `tail
 
 ## Features
 
+- Real-time feedback on child process progress
+- Summary of resource usage printed when program terminates
+- Colorized output for better legibility
+- A simple sample program for testing
+- Writes output streams to files for later use or progress monitoring
+- A configurable timeout to limit child process duration
+- Graceful handling of `Ctrl-C`
+- `stdout` and `stderr` redirection
+- Zero external library dependencies
+
+## Theory of Operation
+
+<p align="center">
+  <img src="./assets/diagram.svg" />
+</p>
+
+Most of the complexity of this program comes from the user interface code like
+argument parsing, and displaying the results. Besides that, all this program
+does is split into a parent and child. The child runs the process the user
+specified, and the parent monitors progress until it is finished.
+
 ## Setup
+
+Build the program with:
+
+```
+make
+```
+
+Run an optional sample program with:
+
+```
+make run
+```
 
 ## Usage
 
@@ -37,12 +73,22 @@ Examples:
   thyme bash -c "ls"
 ```
 
-## Limitations
-
 ## Dependencies
 
 ```
+g++
+make
 ```
+
+## Limitations
+
+The program counts the number of lines in the output files after it has
+finished. This has possible performance implications if these files are
+exceptionally large.
+
+This program makes no attempt to verify that it is being run in an interactive
+terminal. Color codes and escape sequences can and will be written even if the
+output is a file.
 
 ## License
 
