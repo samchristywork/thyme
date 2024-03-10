@@ -15,6 +15,11 @@ high_resolution_clock::time_point start;
 string stderrFilename;
 string stdoutFilename;
 
+string blue = "\033[34m";
+string green = "\033[32m";
+string reset = "\033[0m";
+string yellow = "\033[33m";
+
 int countLines(string filename) {
   ifstream infile(filename);
   string line;
@@ -27,6 +32,15 @@ int countLines(string filename) {
   return count;
 }
 
+int countBytes(string filename) {
+  ifstream infile(filename);
+  infile.seekg(0, ios::end);
+  int bytes = infile.tellg();
+  infile.close();
+
+  return bytes;
+}
+
 void makeCursorInvisible() {
   cout << "\033[?25l";
   cout.flush();
@@ -35,6 +49,12 @@ void makeCursorInvisible() {
 void makeCursorVisible() {
   cout << "\033[?25h";
   cout.flush();
+}
+
+void printUsageString(string label, float value) {
+  cout << "\t" << blue << label << reset;
+  cout << ": ";
+  cout << yellow << value << "s" << reset << endl;
 }
 
 void printTimeUsage() {
@@ -54,10 +74,16 @@ void printTimeUsage() {
   auto systemCPU = usage.ru_stime.tv_sec + usage.ru_stime.tv_usec / 1e6;
 
   cout << endl;
-  cout << "Time usage:" << endl;
-  cout << "\tReal: " << real << " seconds" << endl;
-  cout << "\tUser CPU: " << userCPU << " seconds" << endl;
-  cout << "\tSystem CPU: " << systemCPU << " seconds" << endl;
+  cout << green << "Time usage" << reset << ":" << endl;
+  printUsageString("Real", real);
+  printUsageString("User CPU", userCPU);
+  printUsageString("System CPU", systemCPU);
+}
+
+void printOutputString(string filename, int lines) {
+  cout << "\t" << blue << filename << reset;
+  cout << " (" << yellow << lines << reset << " lines"
+       << ")" << endl;
 }
 
 void cleanup() {
@@ -67,9 +93,9 @@ void cleanup() {
   int stderrLines = countLines(stderrFilename);
 
   cout << endl;
-  cout << "Output saved to:" << endl;
-  cout << "\t" << stdoutFilename << ": (" << stdoutLines << " lines)" << endl;
-  cout << "\t" << stderrFilename << ": (" << stderrLines << " lines)" << endl;
+  cout << green << "Output saved to" << reset << ":" << endl;
+  printOutputString(stdoutFilename, stdoutLines);
+  printOutputString(stderrFilename, stderrLines);
 
   makeCursorVisible();
 }
@@ -89,10 +115,12 @@ void printStats(string stdoutFilename) {
 
   long seconds = duration.count() / 1000;
   long millis = duration.count() % 1000;
-  int lines = countLines(stdoutFilename);
+  int bytes = countBytes(stdoutFilename);
 
   // The spaces before the \r are necessary in case the line length changes.
-  printf("%ld.%03ld seconds: %d lines of output   \r", seconds, millis, lines);
+  printf("%s%ld.%03lds%s: %s%d%s bytes of output%s   \r", yellow.c_str(),
+         seconds, millis, reset.c_str(), yellow.c_str(), bytes, blue.c_str(),
+         reset.c_str());
 }
 
 void redirectOutput(string stdoutFilename, string stderrFilename) {
